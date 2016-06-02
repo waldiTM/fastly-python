@@ -430,7 +430,7 @@ class FastlyConnection(object):
 	def delete_domain(self, service_id, version_number, name):
 		"""Delete the domain for a particular service and version."""
 		content = self._fetch("/service/%s/version/%d/domain/%s" % (service_id, version_number, name), method="DELETE")
-		return self._status(self, content)
+		return self._status(content)
 
 
 	def check_domain(self, service_id, version_number, name):
