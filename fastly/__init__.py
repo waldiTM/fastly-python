@@ -1232,6 +1232,7 @@ class FastlyCondition(FastlyObject, IServiceVersionObject):
 		"type",
 		"statement",
 		"priority",
+                "comment",
 	]
 
 
