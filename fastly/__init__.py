@@ -754,6 +754,49 @@ class FastlyConnection(object):
 		return FastlySettings(self, content)
 
 
+	def list_snippets(self, service_id, version_number):
+		content = self._fetch("/service/%s/version/%d/snippet" % (service_id, version_number))
+		return map(lambda x: FastlySnippet(self, x), content)
+
+
+	def create_snippet(self,
+		service_id,
+		version_number,
+		name,
+		_type,
+		content,
+		priority="10",
+                dynamic="0"):
+		"""Creates a new condition."""
+		body = self._formdata({
+			"name": name,
+			"type": _type,
+			"content": content,
+			"priority": priority,
+			"dynamic": dynamic,
+		}, FastlySnippet.FIELDS)
+		_content = self._fetch("/service/%s/version/%d/snippet" % (service_id, version_number), method="POST", body=body)
+		return FastlySnippet(self, _content)
+
+
+	def get_snippet(self, service_id, version_number, name):
+		content = self._fetch("/service/%s/version/%d/snippet/%s" % (service_id, version_number, name))
+		return FastlySnippet(self, content)
+
+
+	def update_snippet(self, service_id, version_number, name_key, **kwargs):
+                if '_type' in kwargs:
+                        kwargs['type'] = kwargs['_type']
+		body = self._formdata(kwargs, FastlySnippet.FIELDS)
+		content = self._fetch("/service/%s/version/%d/snippet/%s" % (service_id, version_number, name_key), method="PUT", body=body)
+		return FastlySnippet(self, content)
+
+
+	def delete_snippet(self, service_id, version_number, name):
+		content = self._fetch("/service/%s/version/%d/snippet/%s" % (service_id, version_number, name), method="DELETE")
+		return self._status(content)
+
+
 	def get_stats(self, service_id, stat_type=FastlyStatsType.ALL):
 		"""Get the stats from a service."""
 		content = self._fetch("/service/%s/stats/%s" % (service_id, stat_type))
@@ -1469,6 +1512,19 @@ class FastlySettings(FastlyObject, IServiceVersionObject):
 	FIELDS = [
 		"service_id",
 		"version",
+	]
+
+
+class FastlySnippet(FastlyObject, IServiceVersionObject):
+	FIELDS = [
+		"name",
+		"service_id",
+		"version",
+		"name",
+		"priority",
+		"dynamic",
+		"type",
+		"content",
 	]
 
 
